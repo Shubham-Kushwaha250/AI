@@ -1,0 +1,41 @@
+import heapq
+
+def heuristic(state, goal):
+    dist = 0
+    for i in range(1, 9):
+        x1, y1 = divmod(state.index(i), 3)
+        x2, y2 = divmod(goal.index(i), 3)
+        dist += abs(x1 - x2) + abs(y1 - y2)
+    return dist
+
+def solve_8_puzzle(start, goal):
+    pq = [(heuristic(start, goal), 0, start, [start])]
+    visited = set()
+    
+    while pq:
+        f, g, current, path = heapq.heappop(pq)
+        if current == goal:
+            return path
+        
+        visited.add(current)
+        idx = current.index(0) # 0 represents empty space
+        x, y = divmod(idx, 3)
+        
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < 3 and 0 <= ny < 3:
+                n_idx = nx * 3 + ny
+                state_list = list(current)
+                state_list[idx], state_list[n_idx] = state_list[n_idx], state_list[idx]
+                nxt = tuple(state_list)
+                
+                if nxt not in visited:
+                    heapq.heappush(pq, (g + 1 + heuristic(nxt, goal), g + 1, nxt, path + [nxt]))
+
+start_state = (1, 2, 3, 4, 0, 5, 7, 8, 6)
+goal_state = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+
+path = solve_8_puzzle(start_state, goal_state)
+print(f"Total Steps: {len(path) - 1}")
+for p in path:
+    print(p[:3], "\n", p[3:6], "\n", p[6:], "\n---")
