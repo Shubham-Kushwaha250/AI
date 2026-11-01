@@ -1,0 +1,24 @@
+import re
+
+rules = {
+    r'hi|hello|hey': "Hello! How can I help you today?",
+    r'what is your name': "I am an AI assistant chatbot.",
+    r'how are you': "I'm just a Python script, but I'm doing great!",
+    r'bye|exit|quit': "Goodbye! Have a great day!"
+}
+
+def chatbot_response(user_input):
+    for pattern, response in rules.items():
+        if re.search(pattern, user_input.lower()):
+            return response
+    return "I'm sorry, I don't understand that."
+
+print("Chatbot initialized! Type 'exit' or 'bye' to stop.\n")
+
+while True:
+    user_text = input("You: ")
+    response = chatbot_response(user_text)
+    print(f"Bot: {response}\n")
+    
+    if re.search(r'bye|exit|quit', user_text.lower()):
+        break
