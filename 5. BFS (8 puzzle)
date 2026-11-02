@@ -1,33 +1,54 @@
 from collections import deque
 
 def bfs_8_puzzle(start, goal):
+
+    if len(start) != 9 or len(goal) != 9:
+        return None
+
+    if sorted(start) != list(range(9)) or sorted(goal) != list(range(9)):
+        return None
+
     queue = deque([(start, [start])])
     visited = {start}
-    
+
     while queue:
         current, path = queue.popleft()
+
         if current == goal:
             return path
-        
+
         idx = current.index(0)
         x, y = divmod(idx, 3)
-        
+
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = x + dx, y + dy
+
             if 0 <= nx < 3 and 0 <= ny < 3:
                 n_idx = nx * 3 + ny
+
                 state = list(current)
                 state[idx], state[n_idx] = state[n_idx], state[idx]
                 nxt = tuple(state)
-                
+
                 if nxt not in visited:
                     visited.add(nxt)
                     queue.append((nxt, path + [nxt]))
+
+    return None
+
 
 start_state = (1, 2, 3, 4, 0, 5, 7, 8, 6)
 goal_state = (1, 2, 3, 4, 5, 6, 7, 8, 0)
 
 solution = bfs_8_puzzle(start_state, goal_state)
-print(f"BFS Solution found in {len(solution) - 1} steps:")
-for state in solution:
-    print(state)
+
+if solution:
+    print("BFS Solution found in", len(solution) - 1, "steps:")
+
+    for state in solution:
+        print(state[:3])
+        print(state[3:6])
+        print(state[6:])
+        print("---")
+else:
+    print("No solution found or invalid puzzle")
