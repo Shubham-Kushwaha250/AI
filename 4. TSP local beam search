@@ -8,28 +8,45 @@ dist = [
 ]
 
 def cost(path):
-    return sum(dist[path[i]][path[(i + 1) % len(path)]] for i in range(len(path)))
+    return sum(dist[path[i]][path[(i + 1) % len(path)]]
+               for i in range(len(path)))
+
 
 def local_beam_search(k=2, max_iter=100):
     cities = [0, 1, 2, 3]
-    # Initialize k random states
-    beam = [random.sample(cities, len(cities)) for _ in range(k)]
-    
+
+    beam = [random.sample(cities, len(cities))
+            for _ in range(k)]
+
+    best_path = min(beam, key=cost)
+    best_cost = cost(best_path)
+
     for _ in range(max_iter):
         candidates = []
+
         for state in beam:
-            # Generate neighbors by swapping two cities
             for i in range(len(state)):
                 for j in range(i + 1, len(state)):
                     neighbor = state.copy()
                     neighbor[i], neighbor[j] = neighbor[j], neighbor[i]
-                    candidates.append(neighbor)
+
+                    if neighbor not in candidates:
+                        candidates.append(neighbor)
+
+        if not candidates:
+            break
 
         candidates.sort(key=cost)
         beam = candidates[:k]
-        
-    return beam[0], cost(beam[0])
+
+        if cost(beam[0]) < best_cost:
+            best_path = beam[0].copy()
+            best_cost = cost(best_path)
+
+    return best_path, best_cost
+
 
 best_path, best_cost = local_beam_search()
+
 print("Best Tour:", best_path)
 print("Minimum Cost:", best_cost)
