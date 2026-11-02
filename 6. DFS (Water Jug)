@@ -1,37 +1,49 @@
+
 capacity_a, capacity_b = 4, 3
 goal = 2
 
 def dfs_water_jug():
-    stack = [((0, 0), [(0, 0)])] # (state, path)
+    stack = [((0, 0), [(0, 0)])]
     visited = set()
-    
+
     while stack:
         (a, b), path = stack.pop()
-        
+
         if a == goal:
             return path
-            
+
         if (a, b) in visited:
             continue
+
         visited.add((a, b))
-        
-        # Possible rules
+
         rules = [
             (capacity_a, b), 
-            (a, capacity_b), 
-            (0, b),          
-            (a, 0),          
+            (a, capacity_b),
+            (0, b),
+            (a, 0),
+
             # Pour A -> B
-            (a - min(a, capacity_b - b), b + min(a, capacity_b - b)),
+            (a - min(a, capacity_b - b),
+             b + min(a, capacity_b - b)),
+
             # Pour B -> A
-            (a + min(b, capacity_a - a), b - min(b, capacity_a - a))
+            (a + min(b, capacity_a - a),
+             b - min(b, capacity_a - a))
         ]
-        
+
         for nxt in rules:
             if nxt not in visited:
                 stack.append((nxt, path + [nxt]))
 
+    return None
+
+
 solution = dfs_water_jug()
-print("Steps to solve Water Jug problem (Jug A, Jug B):")
-for step in solution:
-    print(step)
+
+if solution:
+    print("Steps to solve Water Jug problem (Jug A, Jug B):")
+    for step in solution:
+        print(step)
+else:
+    print("No solution found")
